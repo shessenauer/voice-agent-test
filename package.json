@@ -1,5 +1,5 @@
 {
-  "name": "realtime-examples",
+  "name": "samos",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-types": "json2ts -i src/schemas -o src/types/generated"
+    "generate-types": "json2ts -i src/schemas -o src/types/generated",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:smoke": "playwright test tests/e2e/smoke.spec.ts"
   },
   "dependencies": {
     "@openai/agents": "^0.0.5",
@@ -18,11 +22,13 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^9.0.3",
+    "styled-jsx": "^5.1.7",
     "uuid": "^11.0.4",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.56.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -59,30 +59,56 @@ function BottomToolbar({
   }
 
   return (
-    <div className="p-4 flex flex-row items-center justify-center gap-x-8">
-      <button
-        onClick={onToggleConnection}
-        className={getConnectionButtonClasses()}
-        disabled={isConnecting}
-      >
-        {getConnectionButtonLabel()}
-      </button>
-
-      <div className="flex flex-row items-center gap-2">
-        <input
-          id="push-to-talk"
-          type="checkbox"
-          checked={isPTTActive}
-          onChange={(e) => setIsPTTActive(e.target.checked)}
-          disabled={!isConnected}
-          className="w-4 h-4"
-        />
-        <label
-          htmlFor="push-to-talk"
-          className="flex items-center cursor-pointer"
+    <div className="p-2 sm:p-4">
+      {/* Mobile layout - stacked vertically */}
+      <div className="flex flex-col sm:hidden space-y-3">
+        {/* Connect button - full width on mobile */}
+        <button
+          onClick={onToggleConnection}
+          className={`${getConnectionButtonClasses().replace('w-36', 'w-full')} h-12`}
+          disabled={isConnecting}
         >
-          Push to talk
-        </label>
+          {getConnectionButtonLabel()}
+        </button>
+
+        {/* Controls - 2 columns */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex items-center gap-2">
+            <input
+              id="push-to-talk"
+              type="checkbox"
+              checked={isPTTActive}
+              onChange={(e) => setIsPTTActive(e.target.checked)}
+              disabled={!isConnected}
+              className="w-4 h-4"
+            />
+            <label
+              htmlFor="push-to-talk"
+              className="flex items-center cursor-pointer text-sm"
+            >
+              Push to talk
+            </label>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <input
+              id="audio-playback"
+              type="checkbox"
+              checked={isAudioPlaybackEnabled}
+              onChange={(e) => setIsAudioPlaybackEnabled(e.target.checked)}
+              disabled={!isConnected}
+              className="w-4 h-4"
+            />
+            <label
+              htmlFor="audio-playback"
+              className="flex items-center cursor-pointer text-sm"
+            >
+              Audio playback
+            </label>
+          </div>
+        </div>
+
+        {/* Talk button - full width on mobile */}
         <button
           onMouseDown={handleTalkButtonDown}
           onMouseUp={handleTalkButtonUp}
@@ -91,64 +117,113 @@ function BottomToolbar({
           disabled={!isPTTActive}
           className={
             (isPTTUserSpeaking ? "bg-gray-300" : "bg-gray-200") +
-            " py-1 px-4 cursor-pointer rounded-md" +
+            " py-3 px-4 cursor-pointer rounded-md w-full" +
             (!isPTTActive ? " bg-gray-100 text-gray-400" : "")
           }
         >
           Talk
         </button>
+
+        {/* Codec selector - full width on mobile */}
+        <div className="flex items-center gap-2">
+          <div className="text-sm">Codec:</div>
+          <select
+            id="codec-select"
+            value={codec}
+            onChange={handleCodecChange}
+            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none cursor-pointer flex-1 text-sm"
+          >
+            <option value="opus">Opus (48 kHz)</option>
+            <option value="pcmu">PCMU (8 kHz)</option>
+            <option value="pcma">PCMA (8 kHz)</option>
+          </select>
+        </div>
       </div>
 
-      <div className="flex flex-row items-center gap-1">
-        <input
-          id="audio-playback"
-          type="checkbox"
-          checked={isAudioPlaybackEnabled}
-          onChange={(e) => setIsAudioPlaybackEnabled(e.target.checked)}
-          disabled={!isConnected}
-          className="w-4 h-4"
-        />
-        <label
-          htmlFor="audio-playback"
-          className="flex items-center cursor-pointer"
+      {/* Desktop layout - horizontal */}
+      <div className="hidden sm:flex flex-row items-center justify-center gap-x-4 lg:gap-x-8">
+        <button
+          onClick={onToggleConnection}
+          className={getConnectionButtonClasses()}
+          disabled={isConnecting}
         >
-          Audio playback
-        </label>
-      </div>
+          {getConnectionButtonLabel()}
+        </button>
 
-      <div className="flex flex-row items-center gap-2">
-        <input
-          id="logs"
-          type="checkbox"
-          checked={isEventsPaneExpanded}
-          onChange={(e) => setIsEventsPaneExpanded(e.target.checked)}
-          className="w-4 h-4"
-        />
-        <label htmlFor="logs" className="flex items-center cursor-pointer">
-          Logs
-        </label>
-      </div>
+        <div className="flex flex-row items-center gap-2">
+          <input
+            id="push-to-talk-desktop"
+            type="checkbox"
+            checked={isPTTActive}
+            onChange={(e) => setIsPTTActive(e.target.checked)}
+            disabled={!isConnected}
+            className="w-4 h-4"
+          />
+          <label
+            htmlFor="push-to-talk-desktop"
+            className="flex items-center cursor-pointer"
+          >
+            Push to talk
+          </label>
+          <button
+            onMouseDown={handleTalkButtonDown}
+            onMouseUp={handleTalkButtonUp}
+            onTouchStart={handleTalkButtonDown}
+            onTouchEnd={handleTalkButtonUp}
+            disabled={!isPTTActive}
+            className={
+              (isPTTUserSpeaking ? "bg-gray-300" : "bg-gray-200") +
+              " py-1 px-4 cursor-pointer rounded-md" +
+              (!isPTTActive ? " bg-gray-100 text-gray-400" : "")
+            }
+          >
+            Talk
+          </button>
+        </div>
 
-      <div className="flex flex-row items-center gap-2">
-        <div>Codec:</div>
-        {/*
-          Codec selector – Lets you force the WebRTC track to use 8 kHz 
-          PCMU/PCMA so you can preview how the agent will sound 
-          (and how ASR/VAD will perform) when accessed via a 
-          phone network.  Selecting a codec reloads the page with ?codec=...
-          which our App-level logic picks up and applies via a WebRTC monkey
-          patch (see codecPatch.ts).
-        */}
-        <select
-          id="codec-select"
-          value={codec}
-          onChange={handleCodecChange}
-          className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none cursor-pointer"
-        >
-          <option value="opus">Opus (48 kHz)</option>
-          <option value="pcmu">PCMU (8 kHz)</option>
-          <option value="pcma">PCMA (8 kHz)</option>
-        </select>
+        <div className="flex flex-row items-center gap-1">
+          <input
+            id="audio-playback-desktop"
+            type="checkbox"
+            checked={isAudioPlaybackEnabled}
+            onChange={(e) => setIsAudioPlaybackEnabled(e.target.checked)}
+            disabled={!isConnected}
+            className="w-4 h-4"
+          />
+          <label
+            htmlFor="audio-playback-desktop"
+            className="flex items-center cursor-pointer"
+          >
+            Audio playback
+          </label>
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <input
+            id="logs-desktop"
+            type="checkbox"
+            checked={isEventsPaneExpanded}
+            onChange={(e) => setIsEventsPaneExpanded(e.target.checked)}
+            className="w-4 h-4"
+          />
+          <label htmlFor="logs-desktop" className="flex items-center cursor-pointer">
+            Logs
+          </label>
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <div>Codec:</div>
+          <select
+            id="codec-select-desktop"
+            value={codec}
+            onChange={handleCodecChange}
+            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none cursor-pointer"
+          >
+            <option value="opus">Opus (48 kHz)</option>
+            <option value="pcmu">PCMU (8 kHz)</option>
+            <option value="pcma">PCMA (8 kHz)</option>
+          </select>
+        </div>
       </div>
     </div>
   );
