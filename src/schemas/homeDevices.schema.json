@@ -1,0 +1,223 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Home Devices Schema",
+  "type": "object",
+  "definitions": {
+    "AlexaDevice": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the device"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable device name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["light", "switch", "thermostat", "fan", "outlet"],
+          "description": "Type of smart device"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["on", "off", "dimmed"],
+          "description": "Current device status"
+        },
+        "brightness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Brightness level for lights (0-100)"
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Current temperature for thermostats"
+        },
+        "targetTemperature": {
+          "type": "number",
+          "description": "Target temperature for thermostats"
+        },
+        "room": {
+          "type": "string",
+          "description": "Room where the device is located"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the device was last updated"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["on_off", "brightness", "color", "temperature_control", "fan_speed"]
+          },
+          "description": "Device capabilities"
+        }
+      },
+      "required": ["id", "name", "type", "status", "room", "lastUpdated", "capabilities"],
+      "additionalProperties": false
+    },
+    "AlexaScene": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the scene"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable scene name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Scene description"
+        },
+        "devices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Device IDs included in this scene"
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Whether the scene is currently active"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the scene was created"
+        },
+        "lastActivated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the scene was last activated"
+        }
+      },
+      "required": ["id", "name", "description", "devices", "isActive", "createdAt"],
+      "additionalProperties": false
+    },
+    "DeviceControlRequest": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["turn_on", "turn_off", "set_brightness", "set_temperature"],
+          "description": "Action to perform on the device"
+        },
+        "brightness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Brightness level for lights"
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Target temperature for thermostats"
+        }
+      },
+      "required": ["action"],
+      "additionalProperties": false
+    },
+    "GetDevicesResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "devices": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlexaDevice"
+              }
+            },
+            "totalCount": {
+              "type": "integer"
+            },
+            "filters": {
+              "type": "object",
+              "properties": {
+                "room": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": ["devices", "totalCount", "filters"]
+        }
+      },
+      "required": ["success", "data"]
+    },
+    "ControlDeviceResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "$ref": "#/definitions/AlexaDevice"
+        }
+      },
+      "required": ["success", "data"]
+    },
+    "GetScenesResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "scenes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlexaScene"
+              }
+            },
+            "totalCount": {
+              "type": "integer"
+            }
+          },
+          "required": ["scenes", "totalCount"]
+        }
+      },
+      "required": ["success", "data"]
+    },
+    "ActivateSceneResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "scene": {
+              "$ref": "#/definitions/AlexaScene"
+            },
+            "updatedDevices": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlexaDevice"
+              }
+            }
+          },
+          "required": ["scene", "updatedDevices"]
+        }
+      },
+      "required": ["success", "data"]
+    }
+  }
+}

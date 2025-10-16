@@ -1,0 +1,232 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Email Drafts Schema",
+  "type": "object",
+  "definitions": {
+    "EmailDraft": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the draft"
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "minItems": 1,
+          "description": "Primary recipients"
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Email subject line"
+        },
+        "body": {
+          "type": "string",
+          "description": "Email body content"
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": "CC recipients"
+        },
+        "bcc": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": "BCC recipients"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "sending", "sent", "failed"],
+          "description": "Current status of the email"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the draft was created"
+        },
+        "lastModified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the draft was last modified"
+        },
+        "sentAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the email was sent (if applicable)"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "Message ID after sending (if applicable)"
+        }
+      },
+      "required": ["id", "to", "subject", "body", "status", "createdAt", "lastModified"],
+      "additionalProperties": false
+    },
+    "CreateDraftRequest": {
+      "type": "object",
+      "properties": {
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "minItems": 1,
+          "description": "Primary recipients"
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Email subject line"
+        },
+        "body": {
+          "type": "string",
+          "description": "Email body content"
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": "CC recipients"
+        },
+        "bcc": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": "BCC recipients"
+        }
+      },
+      "required": ["to", "subject"],
+      "additionalProperties": false
+    },
+    "UpdateDraftRequest": {
+      "type": "object",
+      "properties": {
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "minItems": 1,
+          "description": "Updated primary recipients"
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Updated email subject line"
+        },
+        "body": {
+          "type": "string",
+          "description": "Updated email body content"
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": "Updated CC recipients"
+        },
+        "bcc": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": "Updated BCC recipients"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GetDraftsResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "drafts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/EmailDraft"
+              }
+            },
+            "totalCount": {
+              "type": "integer"
+            },
+            "filters": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "sortBy": {
+                  "type": "string",
+                  "enum": ["createdAt", "lastModified"]
+                }
+              }
+            }
+          },
+          "required": ["drafts", "totalCount", "filters"]
+        }
+      },
+      "required": ["success", "data"]
+    },
+    "CreateDraftResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "$ref": "#/definitions/EmailDraft"
+        }
+      },
+      "required": ["success", "data"]
+    },
+    "UpdateDraftResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "$ref": "#/definitions/EmailDraft"
+        }
+      },
+      "required": ["success", "data"]
+    },
+    "SendDraftResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "$ref": "#/definitions/EmailDraft"
+        }
+      },
+      "required": ["success", "data"]
+    }
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Search Research Schema",
+  "type": "object",
+  "definitions": {
+    "SearchResult": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the search result"
+        },
+        "snippet": {
+          "type": "string",
+          "description": "Brief description or snippet"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the result"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the source"
+        },
+        "publishedDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the content was published"
+        },
+        "relevanceScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Relevance score (0-1)"
+        }
+      },
+      "required": ["title", "snippet", "url", "domain"],
+      "additionalProperties": false
+    },
+    "ResearchSource": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the source"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the source"
+        },
+        "reliability": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Reliability rating of the source"
+        }
+      },
+      "required": ["name", "url", "reliability"],
+      "additionalProperties": false
+    },
+    "DeepResearchResult": {
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "description": "The research question that was asked"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Executive summary of the research findings"
+        },
+        "keyFindings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Key findings from the research"
+        },
+        "detailedAnalysis": {
+          "type": "string",
+          "description": "Detailed analysis of the research topic"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResearchSource"
+          },
+          "description": "Sources consulted during research"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Actionable recommendations based on research"
+        },
+        "researchTime": {
+          "type": "string",
+          "description": "Time taken to complete the research"
+        },
+        "sourcesConsulted": {
+          "type": "integer",
+          "description": "Number of sources consulted"
+        }
+      },
+      "required": ["question", "summary", "keyFindings", "detailedAnalysis", "sources", "recommendations", "researchTime", "sourcesConsulted"],
+      "additionalProperties": false
+    },
+    "WebSearchRequest": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Search query"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Maximum number of results to return"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["web", "news", "images"],
+          "default": "web",
+          "description": "Type of search to perform"
+        }
+      },
+      "required": ["q"],
+      "additionalProperties": false
+    },
+    "DeepResearchRequest": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Research question or topic"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["deep_research"],
+          "description": "Type of research to perform"
+        },
+        "context": {
+          "type": "string",
+          "description": "Additional context for the research"
+        }
+      },
+      "required": ["query", "type"],
+      "additionalProperties": false
+    },
+    "WebSearchResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SearchResult"
+              }
+            },
+            "totalResults": {
+              "type": "integer"
+            },
+            "searchTime": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "required": ["query", "results", "totalResults", "searchTime", "type"]
+        }
+      },
+      "required": ["success", "data"]
+    },
+    "DeepResearchResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "$ref": "#/definitions/DeepResearchResult"
+        }
+      },
+      "required": ["success", "data"]
+    }
+  }
+}

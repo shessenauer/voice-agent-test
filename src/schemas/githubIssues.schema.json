@@ -1,0 +1,196 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GitHub Issues Schema",
+  "type": "object",
+  "definitions": {
+    "GitHubIssue": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Unique identifier for the issue"
+        },
+        "number": {
+          "type": "integer",
+          "description": "Issue number in the repository"
+        },
+        "title": {
+          "type": "string",
+          "description": "Issue title"
+        },
+        "body": {
+          "type": "string",
+          "description": "Issue description/body"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["open", "closed"],
+          "description": "Current state of the issue"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Labels assigned to the issue"
+        },
+        "assignees": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Users assigned to the issue"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the issue was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the issue was last updated"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the issue on GitHub"
+        }
+      },
+      "required": ["id", "number", "title", "state", "labels", "assignees", "createdAt", "updatedAt", "url"],
+      "additionalProperties": false
+    },
+    "CreateIssueRequest": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Issue title"
+        },
+        "body": {
+          "type": "string",
+          "description": "Issue description"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Labels to assign to the issue"
+        },
+        "assignees": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Users to assign to the issue"
+        }
+      },
+      "required": ["title"],
+      "additionalProperties": false
+    },
+    "UpdateIssueRequest": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Updated issue title"
+        },
+        "body": {
+          "type": "string",
+          "description": "Updated issue description"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["open", "closed"],
+          "description": "Updated issue state"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Updated labels"
+        },
+        "assignees": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Updated assignees"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GetIssuesResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GitHubIssue"
+              }
+            },
+            "totalCount": {
+              "type": "integer"
+            },
+            "filters": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "type": "string"
+                },
+                "labels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "assignee": {
+                  "type": "string"
+                },
+                "limit": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": ["issues", "totalCount", "filters"]
+        }
+      },
+      "required": ["success", "data"]
+    },
+    "CreateIssueResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "$ref": "#/definitions/GitHubIssue"
+        }
+      },
+      "required": ["success", "data"]
+    },
+    "UpdateIssueResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "data": {
+          "$ref": "#/definitions/GitHubIssue"
+        }
+      },
+      "required": ["success", "data"]
+    }
+  }
+}

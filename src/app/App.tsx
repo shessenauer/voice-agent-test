@@ -10,6 +10,12 @@ import Transcript from "./components/Transcript";
 import Events from "./components/Events";
 import BottomToolbar from "./components/BottomToolbar";
 
+// PersonalOS Panels
+import TasksPanel from "../components/panels/TasksPanel";
+import CalendarPanel from "../components/panels/CalendarPanel";
+import EmailPanel from "../components/panels/EmailPanel";
+import HomePanel from "../components/panels/HomePanel";
+
 // Types
 import { SessionStatus } from "@/app/types";
 import type { RealtimeAgent } from '@openai/agents/realtime';
@@ -117,6 +123,12 @@ function App() {
       return stored ? stored === 'true' : true;
     },
   );
+
+  // PersonalOS Panel States
+  const [isTasksPanelVisible, setIsTasksPanelVisible] = useState<boolean>(false);
+  const [isCalendarPanelVisible, setIsCalendarPanelVisible] = useState<boolean>(false);
+  const [isEmailPanelVisible, setIsEmailPanelVisible] = useState<boolean>(false);
+  const [isHomePanelVisible, setIsHomePanelVisible] = useState<boolean>(false);
 
   // Initialize the recording hook.
   const { startRecording, stopRecording, downloadRecording } =
@@ -512,6 +524,55 @@ function App() {
               </div>
             </div>
           )}
+
+          {/* PersonalOS Panel Toggles */}
+          {agentSetKey === 'personalOS' && (
+            <div className="flex items-center ml-6 space-x-2">
+              <span className="text-sm font-medium text-gray-700">Panels:</span>
+              <div className="flex space-x-1">
+                <button
+                  onClick={() => setIsTasksPanelVisible(!isTasksPanelVisible)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    isTasksPanelVisible
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Tasks
+                </button>
+                <button
+                  onClick={() => setIsCalendarPanelVisible(!isCalendarPanelVisible)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    isCalendarPanelVisible
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Calendar
+                </button>
+                <button
+                  onClick={() => setIsEmailPanelVisible(!isEmailPanelVisible)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    isEmailPanelVisible
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Email
+                </button>
+                <button
+                  onClick={() => setIsHomePanelVisible(!isHomePanelVisible)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    isHomePanelVisible
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Home
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -527,6 +588,32 @@ function App() {
         />
 
         <Events isExpanded={isEventsPaneExpanded} />
+
+        {/* PersonalOS Panels - Only show when personalOS scenario is selected */}
+        {agentSetKey === 'personalOS' && (
+          <div className="flex flex-col gap-2 w-80 min-w-80">
+            <div className="flex gap-2 h-1/2">
+              <TasksPanel 
+                isVisible={isTasksPanelVisible} 
+                onToggle={() => setIsTasksPanelVisible(!isTasksPanelVisible)} 
+              />
+              <CalendarPanel 
+                isVisible={isCalendarPanelVisible} 
+                onToggle={() => setIsCalendarPanelVisible(!isCalendarPanelVisible)} 
+              />
+            </div>
+            <div className="flex gap-2 h-1/2">
+              <EmailPanel 
+                isVisible={isEmailPanelVisible} 
+                onToggle={() => setIsEmailPanelVisible(!isEmailPanelVisible)} 
+              />
+              <HomePanel 
+                isVisible={isHomePanelVisible} 
+                onToggle={() => setIsHomePanelVisible(!isHomePanelVisible)} 
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <BottomToolbar

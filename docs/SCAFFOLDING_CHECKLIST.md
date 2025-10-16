@@ -28,6 +28,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ## Phase 1.2: Core Agent Structure 🔄 IN PROGRESS
 
 ### Supervisor Agent
+
 - [x] Create `src/app/agentConfigs/personalOS/supervisor.ts`
 - [x] Define supervisor RealtimeAgent with voice: 'sage'
 - [x] Write comprehensive instructions for intent detection
@@ -39,6 +40,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ### Specialist Agents (6 agents)
 
 #### Issues Agent
+
 - [ ] Create `src/app/agentConfigs/personalOS/specialists/issuesAgent.ts`
 - [ ] Define RealtimeAgent with name: 'Issues Agent'
 - [ ] Write instructions for task management
@@ -50,6 +52,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Set handoffs: [] (will populate later)
 
 #### Calendar Agent
+
 - [ ] Create `src/app/agentConfigs/personalOS/specialists/calendarAgent.ts`
 - [ ] Define RealtimeAgent with name: 'Calendar Agent'
 - [ ] Write instructions for calendar management
@@ -60,6 +63,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Set handoffs: [] (will populate later)
 
 #### Email Agent
+
 - [ ] Create `src/app/agentConfigs/personalOS/specialists/emailAgent.ts`
 - [ ] Define RealtimeAgent with name: 'Email Agent'
 - [ ] Write instructions for email management
@@ -70,6 +74,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Set handoffs: [] (will populate later)
 
 #### Home Agent
+
 - [ ] Create `src/app/agentConfigs/personalOS/specialists/homeAgent.ts`
 - [ ] Define RealtimeAgent with name: 'Home Agent'
 - [ ] Write instructions for smart home control
@@ -80,6 +85,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Set handoffs: [] (will populate later)
 
 #### Web Search Agent
+
 - [ ] Create `src/app/agentConfigs/personalOS/specialists/webSearchAgent.ts`
 - [ ] Define RealtimeAgent with name: 'Web Search Agent'
 - [ ] Write instructions for quick search
@@ -89,6 +95,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Set handoffs: [] (will populate later)
 
 #### Deep Research Agent
+
 - [ ] Create `src/app/agentConfigs/personalOS/specialists/deepResearchAgent.ts`
 - [ ] Define RealtimeAgent with name: 'Deep Research Agent'
 - [ ] Write instructions for comprehensive research
@@ -98,18 +105,21 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Set handoffs: [] (will populate later)
 
 ### Handoff Graph Configuration
+
 - [ ] Import all specialist agents in `supervisor.ts`
 - [ ] Set `supervisorAgent.handoffs` to array of all 6 specialists
 - [ ] Set each specialist's `handoffs` to `[supervisorAgent]`
 - [ ] Verify bidirectional handoff structure
 
 ### Index File
+
 - [ ] Create `src/app/agentConfigs/personalOS/index.ts`
 - [ ] Export `personalOSScenario` as array starting with supervisor
 - [ ] Export `personalOSCompanyName` (optional, for guardrails)
 - [ ] Set default export to `personalOSScenario`
 
 ### Registration
+
 - [ ] Open `src/app/agentConfigs/index.ts`
 - [ ] Import `personalOSScenario` from `./personalOS`
 - [ ] Add `personalOS: personalOSScenario` to `allAgentSets`
@@ -117,6 +127,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Save and verify TypeScript compiles
 
 ### Testing
+
 - [ ] Run `npm run dev`
 - [ ] Verify PersonalOS appears in agent dropdown (if applicable)
 - [ ] Test basic voice interaction with supervisor
@@ -128,6 +139,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ## Phase 1.3: MCP Client Foundation
 
 ### MCP Types
+
 - [ ] Create `src/lib/mcp/types.ts`
 - [ ] Define `MCPServer` interface (name, url, type)
 - [ ] Define `MCPTool` interface (name, description, inputSchema, outputSchema)
@@ -136,6 +148,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Export all types
 
 ### MCP Client Wrapper
+
 - [ ] Create `src/lib/mcp/client.ts`
 - [ ] Create `MCPClient` class
 - [ ] Add `servers: Map<string, MCPServer>` property
@@ -149,6 +162,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Export singleton instance `mcpClient`
 
 ### Tool Factory
+
 - [ ] Create `src/lib/mcp/toolFactory.ts`
 - [ ] Import `tool` from '@openai/agents/realtime'
 - [ ] Implement `convertMCPSchemaToOpenAI(mcpSchema)` function
@@ -158,6 +172,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Export factory functions
 
 ### GitHub Adapter (Mock)
+
 - [ ] Create `src/lib/mcp/adapters/githubAdapter.ts`
 - [ ] Define mock responses for all GitHub tools
 - [ ] Implement `createTaskMock(title, priority?, due?)` → returns {number: 123}
@@ -168,6 +183,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Register server with `mcpClient.registerServer('github', ...)`
 
 ### Calendar Adapter (Mock)
+
 - [ ] Create `src/lib/mcp/adapters/calendarAdapter.ts`
 - [ ] Define mock responses for calendar tools
 - [ ] Implement `createEventMock(title, start, end, ...)` → returns {id: 'evt_123'}
@@ -177,6 +193,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Register server with `mcpClient.registerServer('calendar', ...)`
 
 ### Gmail Adapter (Mock)
+
 - [ ] Create `src/lib/mcp/adapters/gmailAdapter.ts`
 - [ ] Define mock responses for Gmail tools
 - [ ] Implement `draftEmailMock(to, subject, body)` → returns {draft_id: 'draft_123'}
@@ -186,6 +203,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Register server with `mcpClient.registerServer('gmail', ...)`
 
 ### Alexa Adapter (Mock)
+
 - [ ] Create `src/lib/mcp/adapters/alexaAdapter.ts`
 - [ ] Define mock responses for Alexa tools
 - [ ] Implement `runSceneMock(sceneId)` → returns {success: true}
@@ -195,6 +213,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Register server with `mcpClient.registerServer('alexa', ...)`
 
 ### Search Adapter (Mock)
+
 - [ ] Create `src/lib/mcp/adapters/searchAdapter.ts`
 - [ ] Define mock responses for search tools
 - [ ] Implement `webSearchMock(query)` → returns {results: [...], summary: '...'}
@@ -203,6 +222,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Register server with `mcpClient.registerServer('search', ...)`
 
 ### Tool Registration
+
 - [ ] Create `src/app/agentConfigs/personalOS/tools/githubTools.ts`
 - [ ] Import `createMCPTool` from toolFactory
 - [ ] Import `githubMCPServer` from adapters
@@ -231,6 +251,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Add tools to `webSearchAgent.tools` and `deepResearchAgent.tools`
 
 ### Testing
+
 - [ ] Test tool creation doesn't throw errors
 - [ ] Test calling a mock tool returns expected structure
 - [ ] Test error handling when tool fails
@@ -242,12 +263,14 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ## Phase 1.4: UI Extensions
 
 ### Read Existing UI Structure
+
 - [ ] Read `src/app/App.tsx` to understand current layout
 - [ ] Read `src/app/components/Transcript.tsx` for reference
 - [ ] Read `src/app/components/Events.tsx` for reference
 - [ ] Identify where to inject panels in layout
 
 ### TasksPanel Component
+
 - [ ] Create `src/components/panels/TasksPanel.tsx`
 - [ ] Import React, useState, useEffect
 - [ ] Define mock tasks data structure
@@ -264,6 +287,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Export TasksPanel component
 
 ### CalendarPanel Component
+
 - [ ] Create `src/components/panels/CalendarPanel.tsx`
 - [ ] Import React, useState, useEffect
 - [ ] Define mock events data structure (next 7 days)
@@ -278,6 +302,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Export CalendarPanel component
 
 ### EmailPanel Component
+
 - [ ] Create `src/components/panels/EmailPanel.tsx`
 - [ ] Import React, useState
 - [ ] Define mock drafts data structure
@@ -292,6 +317,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Export EmailPanel component
 
 ### Mock Data
+
 - [ ] Create `src/test/fixtures/tasks.json` with 10 sample tasks
 - [ ] Include variety of statuses, priorities, and due dates
 - [ ] Create `src/test/fixtures/events.json` with 5 sample events
@@ -300,6 +326,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Include variety of recipients and topics
 
 ### App Layout Update
+
 - [ ] Open `src/app/App.tsx`
 - [ ] Import TasksPanel, CalendarPanel, EmailPanel
 - [ ] Identify current layout structure (likely flex/grid)
@@ -313,6 +340,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Test layout at different screen sizes
 
 ### Styling
+
 - [ ] Ensure panels match existing dark theme
 - [ ] Use consistent spacing (Tailwind spacing scale)
 - [ ] Use consistent borders/shadows
@@ -320,6 +348,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Test color contrast for accessibility
 
 ### Testing
+
 - [ ] Verify all panels render with mock data
 - [ ] Test view switching in TasksPanel
 - [ ] Test draft selection in EmailPanel
@@ -332,11 +361,13 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ## Phase 1.5: API Route Extensions
 
 ### Read Existing API Routes
+
 - [ ] Read `src/app/api/session/route.ts` to understand pattern
 - [ ] Read `src/app/api/responses/route.ts` for reference
 - [ ] Understand NextJS App Router API route structure
 
 ### Ingest Endpoint
+
 - [ ] Create `src/app/api/ingest/route.ts`
 - [ ] Import NextRequest, NextResponse
 - [ ] Define POST handler
@@ -350,10 +381,10 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
   ```typescript
   {
     actions: [
-      { type: 'create_task', title: '...', priority: 'P1', due: '...' },
-      { type: 'create_event', title: '...', start_iso: '...', end_iso: '...' },
+      { type: "create_task", title: "...", priority: "P1", due: "..." },
+      { type: "create_event", title: "...", start_iso: "...", end_iso: "..." },
       // ...
-    ]
+    ];
   }
   ```
 - [ ] For now, return mock ActionPlan (later: call GPT-4 Vision)
@@ -362,6 +393,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Export POST as default
 
 ### ActionPlan Type
+
 - [ ] Create `src/types/actionPlan.ts`
 - [ ] Define ActionType union type
 - [ ] Define CreateTaskAction interface
@@ -372,6 +404,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Export types
 
 ### Testing
+
 - [ ] Test endpoint with curl/Postman:
   ```bash
   curl -X POST http://localhost:3000/api/ingest \
@@ -384,6 +417,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Test with invalid image type (should reject)
 
 ### Responses API Extension (Optional)
+
 - [ ] Determine if MCP tools need server-side execution
 - [ ] If yes:
   - [ ] Read existing `/api/responses/route.ts`
@@ -398,6 +432,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ### JSON Schemas
 
 #### ActionPlan Schema
+
 - [ ] Create `src/schemas/actionPlan.schema.json`
 - [ ] Define schema for ActionPlan type
 - [ ] Include all action types
@@ -405,6 +440,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Add validation rules
 
 #### GitHub Issues Schema
+
 - [ ] Create `src/schemas/githubIssues.schema.json`
 - [ ] Define create_task request/response
 - [ ] Define set_status request/response
@@ -413,29 +449,34 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Include enum for priority and status
 
 #### Google Calendar Schema
+
 - [ ] Create `src/schemas/googleCalendar.schema.json`
 - [ ] Define create_calendar_event request/response
 - [ ] Define list_events request/response
 - [ ] Include ISO date-time format validation
 
 #### Gmail Schema
+
 - [ ] Create `src/schemas/gmail.schema.json`
 - [ ] Define draft_email request/response
 - [ ] Define send_email request/response
 - [ ] Define search_emails request/response
 
 #### Alexa Schema
+
 - [ ] Create `src/schemas/alexa.schema.json`
 - [ ] Define alexa_scene_run request/response
 - [ ] Define alexa_device_control request/response
 - [ ] Define alexa_list_scenes response
 
 #### Web Search Schema
+
 - [ ] Create `src/schemas/webSearch.schema.json`
 - [ ] Define web_search request/response
 - [ ] Define deep_research request/response
 
 ### Type Generation Setup
+
 - [ ] Install `json-schema-to-typescript`:
   ```bash
   npm install --save-dev json-schema-to-typescript
@@ -449,6 +490,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Verify generated types in `src/types/generated/`
 
 ### Import Generated Types
+
 - [ ] Update `src/lib/mcp/adapters/githubAdapter.ts` to import generated types
 - [ ] Update `src/lib/mcp/adapters/calendarAdapter.ts` to import generated types
 - [ ] Update `src/lib/mcp/adapters/gmailAdapter.ts` to import generated types
@@ -458,6 +500,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Update API routes to use generated types
 
 ### Testing
+
 - [ ] Run `npm run generate-types` and verify no errors
 - [ ] Verify TypeScript compilation succeeds
 - [ ] Test IntelliSense works with generated types
@@ -468,6 +511,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ## Phase 1.7: Testing Infrastructure
 
 ### Install Test Dependencies
+
 - [ ] Install vitest:
   ```bash
   npm install --save-dev vitest @vitest/ui
@@ -482,6 +526,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
   ```
 
 ### Test Configuration
+
 - [ ] Create `vitest.config.ts` in project root
 - [ ] Configure test environment: jsdom
 - [ ] Configure globals: true
@@ -494,23 +539,27 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
   ```
 
 ### Test Setup File
+
 - [ ] Create `src/test/setup.ts`
 - [ ] Import `@testing-library/jest-dom`
 - [ ] Add global test utilities
 - [ ] Configure mock implementations
 
 ### Mock Utilities
+
 - [ ] Create `src/test/mocks/mcpClient.ts`
 - [ ] Mock all MCP server responses
 - [ ] Export mock factory functions
 - [ ] Create `src/test/mocks/realtimeAgent.ts` (if needed)
 
 ### Test Fixtures
+
 - [ ] Verify `src/test/fixtures/tasks.json` exists
 - [ ] Verify `src/test/fixtures/events.json` exists
 - [ ] Verify `src/test/fixtures/emails.json` exists
 
 ### Test Utilities
+
 - [ ] Create `src/test/utils.tsx`
 - [ ] Implement `renderWithProviders()` helper
 - [ ] Implement `mockAuthStore()` helper
@@ -519,6 +568,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ### Unit Tests
 
 #### MCP Client Tests
+
 - [ ] Create `src/lib/mcp/client.test.ts`
 - [ ] Test `registerServer()` adds server to map
 - [ ] Test `discoverTools()` returns tools
@@ -527,12 +577,14 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Test retry logic
 
 #### Tool Factory Tests
+
 - [ ] Create `src/lib/mcp/toolFactory.test.ts`
 - [ ] Test schema conversion produces valid OpenAI schema
 - [ ] Test `createMCPTool()` returns executable tool
 - [ ] Test tool execution calls mcpClient correctly
 
 #### Adapter Tests
+
 - [ ] Create tests for each adapter (githubAdapter.test.ts, etc.)
 - [ ] Test mock responses return expected structure
 - [ ] Test all tool methods
@@ -540,6 +592,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ### Component Tests
 
 #### TasksPanel Tests
+
 - [ ] Create `src/components/panels/TasksPanel.test.tsx`
 - [ ] Test renders with mock data
 - [ ] Test view switching (Today → This Week → etc.)
@@ -547,18 +600,21 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Test click handlers
 
 #### CalendarPanel Tests
+
 - [ ] Create `src/components/panels/CalendarPanel.test.tsx`
 - [ ] Test renders events
 - [ ] Test grouping by date
 - [ ] Test event card display
 
 #### EmailPanel Tests
+
 - [ ] Create `src/components/panels/EmailPanel.test.tsx`
 - [ ] Test renders drafts
 - [ ] Test draft selection
 - [ ] Test send confirmation
 
 ### API Route Tests
+
 - [ ] Create `src/app/api/ingest/route.test.ts`
 - [ ] Test accepts multipart form data
 - [ ] Test returns ActionPlan structure
@@ -566,6 +622,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Test handles missing fields
 
 ### Run Tests
+
 - [ ] Run `npm test`
 - [ ] Verify all tests pass
 - [ ] Check coverage report
@@ -576,6 +633,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ## Phase 1.8: Documentation
 
 ### Architecture Documentation
+
 - [ ] Create `docs/architecture.md`
 - [ ] Add system architecture diagram:
   - [ ] User → Browser → PersonalOS → Agents
@@ -592,6 +650,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Add code examples for each pattern
 
 ### Development Guide
+
 - [ ] Create `docs/development.md`
 - [ ] Add environment setup section:
   - [ ] Prerequisites (Node, npm, etc.)
@@ -615,6 +674,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
   - [ ] Inspecting agent handoffs
 
 ### README Update
+
 - [ ] Open `README.md`
 - [ ] Add PersonalOS project overview
 - [ ] Add key features list
@@ -632,6 +692,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Update any outdated template references
 
 ### API Documentation (Optional)
+
 - [ ] Document each API endpoint in development.md:
   - [ ] `/api/session` - Create ephemeral token
   - [ ] `/api/responses` - Responses API proxy
@@ -644,6 +705,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 ## Phase 1 Acceptance Criteria
 
 ### Agent System Checks
+
 - [ ] PersonalOS appears in UI dropdown (if applicable)
 - [ ] Supervisor agent responds to greetings via voice
 - [ ] Supervisor correctly detects intent (test with: "Add task", "Schedule event", "Draft email")
@@ -656,6 +718,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Email send requires explicit "send" command
 
 ### UI Checks
+
 - [ ] TasksPanel renders with mock data
 - [ ] Can switch between Today, This Week, Waiting, Overdue views
 - [ ] Task filtering works correctly for each view
@@ -669,6 +732,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] Panels can be toggled (show/hide)
 
 ### API Checks
+
 - [ ] `/api/ingest` endpoint accessible
 - [ ] Can POST multipart form with image
 - [ ] Returns valid ActionPlan JSON
@@ -677,12 +741,14 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] `/api/responses` still works (template endpoint)
 
 ### Type Safety Checks
+
 - [ ] `npm run build` completes without TypeScript errors
 - [ ] `npm run generate-types` produces valid types
 - [ ] IntelliSense works in VS Code for generated types
 - [ ] No `any` types in PersonalOS code (except where necessary)
 
 ### Testing Checks
+
 - [ ] `npm test` runs successfully
 - [ ] All unit tests pass (MCP, tools, adapters)
 - [ ] All component tests pass (panels)
@@ -690,6 +756,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] No failing tests
 
 ### Documentation Checks
+
 - [ ] `docs/architecture.md` complete and accurate
 - [ ] `docs/development.md` complete with setup instructions
 - [ ] README.md updated with PersonalOS info
@@ -697,6 +764,7 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 - [ ] All code examples are accurate
 
 ### Performance Checks
+
 - [ ] Dev server starts in <10 seconds
 - [ ] Voice interaction responds in <3 seconds
 - [ ] Panel rendering is smooth (no jank)
@@ -705,12 +773,27 @@ This checklist provides step-by-step instructions for implementing Phase 1 of Pe
 
 ---
 
+## Future Tasks
+
+### Phase 1.9: Connect MCP Tools to Real API Endpoints
+
+- [ ] Update MCP adapters to call actual API endpoints instead of mock data
+- [ ] Connect GitHub MCP tools to `/api/github/issues` endpoints
+- [ ] Connect Calendar MCP tools to `/api/calendar/events` endpoints
+- [ ] Connect Email MCP tools to `/api/email/drafts` endpoints
+- [ ] Connect Home MCP tools to `/api/home/devices` endpoints
+- [ ] Connect Search MCP tools to `/api/search/web` endpoints
+- [ ] Test end-to-end flow: Voice → MCP Tool → API → Response
+- [ ] Verify all panels update with real data from API calls
+
 ## Next Phase Preview: Phase 2 - GitHub Issues Integration (Real MCP)
 
 ### What's Next
+
 After completing Phase 1 scaffolding, Phase 2 will implement the first **real** MCP integration with GitHub Issues.
 
 **Key Deliverables:**
+
 1. Build or integrate real GitHub Issues MCP server
 2. Replace mock `githubAdapter` with real GitHub API calls
 3. Implement GitHub GraphQL for Projects v2
@@ -729,6 +812,7 @@ Result: Real GitHub Issue created, visible in GitHub UI and TasksPanel
 ## Notes & Tips
 
 ### Using This Checklist
+
 1. Work through each phase sequentially
 2. Check off items as you complete them
 3. Don't skip ahead - dependencies matter
@@ -736,12 +820,14 @@ Result: Real GitHub Issue created, visible in GitHub UI and TasksPanel
 5. Update actual times in SCAFFOLDING_PLAN.md
 
 ### Common Issues
+
 - **TypeScript errors**: Run `npm run generate-types` first
 - **Agent not responding**: Check Events panel for errors
 - **Tool not executing**: Verify tool is in agent's tools array
 - **Panel not showing**: Check responsive breakpoint and toggle state
 
 ### Getting Help
+
 - Check existing template agents for reference
 - Use Events panel to debug agent/tool execution
 - Review OpenAI Realtime Agents docs
@@ -765,5 +851,5 @@ Result: Real GitHub Issue created, visible in GitHub UI and TasksPanel
 
 ---
 
-*Last Updated: [Current Date]*
-*Status: Phase 1.2 In Progress*
+_Last Updated: [Current Date]_
+_Status: Phase 1.2 In Progress_
