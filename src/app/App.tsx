@@ -77,11 +77,16 @@ function App() {
 
   const sdkAudioElement = React.useMemo(() => {
     if (typeof window === 'undefined') return undefined;
-    const el = document.createElement('audio');
-    el.autoplay = true;
-    el.style.display = 'none';
-    document.body.appendChild(el);
-    return el;
+    try {
+      const el = document.createElement('audio');
+      el.autoplay = true;
+      el.style.display = 'none';
+      document.body.appendChild(el);
+      return el;
+    } catch (error) {
+      console.warn('Failed to create audio element:', error);
+      return undefined;
+    }
   }, []);
 
   // Attach SDK audio element once it exists (after first render in browser)
@@ -114,13 +119,7 @@ function App() {
   const [userText, setUserText] = useState<string>("");
   const [isPTTActive, setIsPTTActive] = useState<boolean>(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState<boolean>(false);
-  const [isAudioPlaybackEnabled, setIsAudioPlaybackEnabled] = useState<boolean>(
-    () => {
-      if (typeof window === 'undefined') return true;
-      const stored = localStorage.getItem('audioPlaybackEnabled');
-      return stored ? stored === 'true' : true;
-    },
-  );
+  const [isAudioPlaybackEnabled, setIsAudioPlaybackEnabled] = useState<boolean>(true);
 
   // PersonalOS Panel States
   // Panel visibility states removed
@@ -369,35 +368,56 @@ function App() {
   };
 
   useEffect(() => {
-    const storedPushToTalkUI = localStorage.getItem("pushToTalkUI");
-    if (storedPushToTalkUI) {
-      setIsPTTActive(storedPushToTalkUI === "true");
-    }
-    const storedLogsExpanded = localStorage.getItem("logsExpanded");
-    if (storedLogsExpanded) {
-      setIsEventsPaneExpanded(storedLogsExpanded === "true");
-    }
-    const storedAudioPlaybackEnabled = localStorage.getItem(
-      "audioPlaybackEnabled"
-    );
-    if (storedAudioPlaybackEnabled) {
-      setIsAudioPlaybackEnabled(storedAudioPlaybackEnabled === "true");
+    if (typeof window === 'undefined') return;
+    
+    try {
+      const storedPushToTalkUI = localStorage.getItem("pushToTalkUI");
+      if (storedPushToTalkUI) {
+        setIsPTTActive(storedPushToTalkUI === "true");
+      }
+      const storedLogsExpanded = localStorage.getItem("logsExpanded");
+      if (storedLogsExpanded) {
+        setIsEventsPaneExpanded(storedLogsExpanded === "true");
+      }
+      const storedAudioPlaybackEnabled = localStorage.getItem(
+        "audioPlaybackEnabled"
+      );
+      if (storedAudioPlaybackEnabled) {
+        setIsAudioPlaybackEnabled(storedAudioPlaybackEnabled === "true");
+      }
+    } catch (error) {
+      console.warn('Failed to load localStorage settings:', error);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("pushToTalkUI", isPTTActive.toString());
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem("pushToTalkUI", isPTTActive.toString());
+    } catch (error) {
+      console.warn('Failed to save pushToTalkUI setting:', error);
+    }
   }, [isPTTActive]);
 
   useEffect(() => {
-    localStorage.setItem("logsExpanded", isEventsPaneExpanded.toString());
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem("logsExpanded", isEventsPaneExpanded.toString());
+    } catch (error) {
+      console.warn('Failed to save logsExpanded setting:', error);
+    }
   }, [isEventsPaneExpanded]);
 
   useEffect(() => {
-    localStorage.setItem(
-      "audioPlaybackEnabled",
-      isAudioPlaybackEnabled.toString()
-    );
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(
+        "audioPlaybackEnabled",
+        isAudioPlaybackEnabled.toString()
+      );
+    } catch (error) {
+      console.warn('Failed to save audioPlaybackEnabled setting:', error);
+    }
   }, [isAudioPlaybackEnabled]);
 
   useEffect(() => {

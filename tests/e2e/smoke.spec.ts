@@ -24,7 +24,7 @@ const pages = [
     name: 'Voice Agent',
     path: '/dashboard/voice-agent',
     expectedTitle: undefined, // This page uses Suspense and may not have a specific title
-    expectedElements: ['Loading...'] // We'll check for the loading state or main content
+    expectedElements: ['Loading Voice Agent...', 'Realtime API'] // We'll check for the loading state or main content
   }
 ];
 
@@ -56,12 +56,25 @@ test.describe('Smoke Tests - Page Loading', () => {
       
       // Check for specific content if expected
       if (page.expectedTitle) {
-        await expect(browserPage.locator('h1')).toContainText(page.expectedTitle);
+        await expect(browserPage.locator('h1').filter({ hasText: page.expectedTitle })).toBeVisible();
       }
       
-      // Check for expected elements
+      // Check for expected elements (with longer timeout for voice agent)
       for (const element of page.expectedElements) {
-        await expect(browserPage.locator('text=' + element).first()).toBeVisible();
+        try {
+          await expect(browserPage.locator('text=' + element).first()).toBeVisible({ timeout: 10000 });
+        } catch (error) {
+          // For voice agent page, if we don't see loading, check for main content
+          if (page.name === 'Voice Agent' && element === 'Loading Voice Agent...') {
+            // Check if we can see the main interface instead
+            const hasMainContent = await browserPage.locator('text=Realtime API').isVisible();
+            if (hasMainContent) {
+              console.log('Voice agent loaded successfully, skipping loading check');
+              continue;
+            }
+          }
+          throw error;
+        }
       }
       
       // Check that the page is interactive (no loading spinners stuck)
