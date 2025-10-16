@@ -33,12 +33,14 @@ import { chatSupervisorScenario } from "@/app/agentConfigs/chatSupervisor";
 import { customerServiceRetailCompanyName } from "@/app/agentConfigs/customerServiceRetail";
 import { chatSupervisorCompanyName } from "@/app/agentConfigs/chatSupervisor";
 import { simpleHandoffScenario } from "@/app/agentConfigs/simpleHandoff";
+import { personalOSScenario } from "@/app/agentConfigs/personalOS";
 
 // Map used by connect logic for scenarios defined via the SDK.
 const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
   simpleHandoff: simpleHandoffScenario,
   customerServiceRetail: customerServiceRetailScenario,
   chatSupervisor: chatSupervisorScenario,
+  personalOS: personalOSScenario,
 };
 
 import useAudioDownload from "./hooks/useAudioDownload";
@@ -207,9 +209,17 @@ function App() {
   };
 
   const connectToRealtime = async () => {
+    console.log('connectToRealtime called');
     const agentSetKey = searchParams.get("agentConfig") || "default";
+    console.log('Agent set key:', agentSetKey);
+    console.log('SDK scenario map keys:', Object.keys(sdkScenarioMap));
+    
     if (sdkScenarioMap[agentSetKey]) {
-      if (sessionStatus !== "DISCONNECTED") return;
+      console.log('Found SDK scenario, proceeding with connection');
+      if (sessionStatus !== "DISCONNECTED") {
+        console.log('Already connected or connecting, returning');
+        return;
+      }
       setSessionStatus("CONNECTING");
 
       try {
@@ -329,10 +339,13 @@ function App() {
   };
 
   const onToggleConnection = () => {
+    console.log('Connect button clicked! Current status:', sessionStatus);
     if (sessionStatus === "CONNECTED" || sessionStatus === "CONNECTING") {
+      console.log('Disconnecting...');
       disconnectFromRealtime();
       setSessionStatus("DISCONNECTED");
     } else {
+      console.log('Connecting...');
       connectToRealtime();
     }
   };

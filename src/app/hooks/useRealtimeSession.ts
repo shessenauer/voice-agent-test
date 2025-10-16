@@ -118,6 +118,7 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
     }: ConnectOptions) => {
       if (sessionRef.current) return; // already connected
 
+      console.log('Starting connection process...');
       updateStatus('CONNECTING');
 
       const ek = await getEphemeralKey();
@@ -149,8 +150,16 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
         context: extraContext ?? {},
       });
 
-      await sessionRef.current.connect({ apiKey: ek });
-      updateStatus('CONNECTED');
+      console.log('Attempting to connect with API key...');
+      try {
+        await sessionRef.current.connect({ apiKey: ek });
+        console.log('Successfully connected!');
+        updateStatus('CONNECTED');
+      } catch (error) {
+        console.error('Connection failed:', error);
+        updateStatus('DISCONNECTED');
+        throw error;
+      }
     },
     [callbacks, updateStatus],
   );
