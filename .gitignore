@@ -32,3 +32,20 @@ Thumbs.db
 
 # Generated types
 src/types/generated/
+
+# Visual regression test screenshots and snapshots
+test-screenshots/
+test-snapshots/
+tests/screenshots/
+test-results/
+playwright-report/
+visual-regression.spec.ts-snapshots/
+
+
+/Users/shessenauer/Documents/Sam/git/voice-agent-test/tests/e2e/visual-regression.spec.ts-snapshots/test-screenshots-dark-mode-analytics-chromium-darwin.png
+/Users/shessenauer/Documents/Sam/git/voice-agent-test/tests/e2e/visual-regression.spec.ts-snapshots/test-screenshots-dark-mode-dashboard-chromium-darwin.png
+/Users/shessenauer/Documents/Sam/git/voice-agent-test/tests/e2e/visual-regression.spec.ts-snapshots/test-screenshots-dark-mode-voice-agent-chromium-darwin.png
+/Users/shessenauer/Documents/Sam/git/voice-agent-test/tests/e2e/visual-regression.spec.ts-snapshots/test-screenshots-light-mode-analytics-chromium-darwin.png
+/Users/shessenauer/Documents/Sam/git/voice-agent-test/tests/e2e/visual-regression.spec.ts-snapshots/test-screenshots-light-mode-dashboard-chromium-darwin.png
+/Users/shessenauer/Documents/Sam/git/voice-agent-test/tests/e2e/visual-regression.spec.ts-snapshots/test-screenshots-light-mode-voice-agent-chromium-darwin.png
+/Users/shessenauer/Documents/Sam/git/voice-agent-test/tests/e2e/visual-regression.spec.ts-snapshots/test-snapshots

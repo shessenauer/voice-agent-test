@@ -47,7 +47,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:translate-x-0`}>
         <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">AI Dashboard</h1>
+          <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <span className="text-xl">🤖</span>
+            <span className="text-xl font-bold text-gray-900 dark:text-white">Agent</span>
+          </Link>
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"

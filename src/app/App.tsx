@@ -472,6 +472,20 @@ function App() {
 
   return (
     <div className="text-base flex flex-col h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 relative">
+      {/* Feedback warning */}
+      {sessionStatus === 'CONNECTED' && !isPTTActive && (
+        <div className="bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 p-2 text-sm">
+          <div className="flex">
+            <div className="ml-3">
+              <p className="text-yellow-700 dark:text-yellow-200">
+                <strong>Audio Feedback Warning:</strong> If you experience feedback loops (the agent hearing itself), 
+                please enable "Push to talk" mode in the toolbar below to prevent this issue.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile-responsive header */}
       <div className="p-3 sm:p-5 text-lg font-semibold">
         {/* Logo and title - always visible */}

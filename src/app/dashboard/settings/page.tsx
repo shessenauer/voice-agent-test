@@ -60,9 +60,10 @@ export default function SettingsPage() {
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label htmlFor="push-to-talk" className="ml-2 block text-sm text-gray-900">
-                Enable push-to-talk mode
+                Enable push-to-talk mode (recommended to prevent audio feedback)
               </label>
             </div>
+
           </div>
         </div>
       </div>

@@ -8,43 +8,31 @@ function useAudioDownload() {
   const recordedChunksRef = useRef<Blob[]>([]);
 
   /**
-   * Starts recording by combining the provided remote stream with
-   * the microphone audio.
-   * @param remoteStream - The remote MediaStream (e.g., from the audio element).
+   * Starts recording only the microphone audio to prevent feedback loops.
+   * The remote stream (agent's voice) is not recorded to avoid the agent
+   * hearing itself and creating a feedback loop.
+   * @param remoteStream - The remote MediaStream (e.g., from the audio element) - not used for recording.
    */
   const startRecording = async (remoteStream: MediaStream) => {
     let micStream: MediaStream;
     try {
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      micStream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
     } catch (err) {
       console.error("Error getting microphone stream:", err);
       // Fallback to an empty MediaStream if microphone access fails.
       micStream = new MediaStream();
     }
 
-    // Create an AudioContext to merge the streams.
-    const audioContext = new AudioContext();
-    const destination = audioContext.createMediaStreamDestination();
-
-    // Connect the remote audio stream.
-    try {
-      const remoteSource = audioContext.createMediaStreamSource(remoteStream);
-      remoteSource.connect(destination);
-    } catch (err) {
-      console.error("Error connecting remote stream to the audio context:", err);
-    }
-
-    // Connect the microphone audio stream.
-    try {
-      const micSource = audioContext.createMediaStreamSource(micStream);
-      micSource.connect(destination);
-    } catch (err) {
-      console.error("Error connecting microphone stream to the audio context:", err);
-    }
-
+    // Only record the microphone stream to prevent feedback
     const options = { mimeType: "audio/webm" };
     try {
-      const mediaRecorder = new MediaRecorder(destination.stream, options);
+      const mediaRecorder = new MediaRecorder(micStream, options);
       mediaRecorder.ondataavailable = (event: BlobEvent) => {
         if (event.data && event.data.size > 0) {
           recordedChunksRef.current.push(event.data);
@@ -54,7 +42,7 @@ function useAudioDownload() {
       mediaRecorder.start();
       mediaRecorderRef.current = mediaRecorder;
     } catch (err) {
-      console.error("Error starting MediaRecorder with combined stream:", err);
+      console.error("Error starting MediaRecorder with microphone stream:", err);
     }
   };
 

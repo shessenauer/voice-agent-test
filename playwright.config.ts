@@ -24,6 +24,16 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
 
+  /* Global test options */
+  expect: {
+    /* Screenshot comparison options */
+    toHaveScreenshot: {
+      threshold: 0.2,
+      mode: 'rgb',
+      path: 'test-snapshots'
+    },
+  },
+
   /* Configure projects for major browsers */
   projects: [
     {
