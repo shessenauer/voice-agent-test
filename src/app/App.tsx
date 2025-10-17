@@ -471,7 +471,7 @@ function App() {
   const agentSetKey = searchParams.get("agentConfig") || "default";
 
   return (
-    <div className="text-base flex flex-col h-screen bg-gray-100 text-gray-800 relative">
+    <div className="text-base flex flex-col h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 relative">
       {/* Mobile-responsive header */}
       <div className="p-3 sm:p-5 text-lg font-semibold">
         {/* Logo and title - always visible */}
@@ -490,7 +490,7 @@ function App() {
               />
             </div>
             <div className="text-sm sm:text-lg">
-              Realtime API <span className="text-gray-500">Agents</span>
+              Realtime API <span className="text-gray-500 dark:text-gray-400">Agents</span>
             </div>
           </div>
         </div>
@@ -500,14 +500,14 @@ function App() {
           {/* Scenario and Agent selectors */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
             <div className="flex items-center">
-              <label className="flex items-center text-sm sm:text-base gap-1 mr-2 font-medium">
+              <label className="flex items-center text-sm sm:text-base gap-1 mr-2 font-medium text-gray-700 dark:text-gray-300">
                 Scenario
               </label>
               <div className="relative inline-block">
                 <select
                   value={agentSetKey}
                   onChange={handleAgentChange}
-                  className="appearance-none border border-gray-300 rounded-lg text-sm sm:text-base px-2 py-1 pr-8 cursor-pointer font-normal focus:outline-none"
+                  className="appearance-none border border-gray-300 dark:border-gray-600 rounded-lg text-sm sm:text-base px-2 py-1 pr-8 cursor-pointer font-normal focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                 >
                   {Object.keys(allAgentSets).map((agentKey) => (
                     <option key={agentKey} value={agentKey}>
@@ -529,14 +529,14 @@ function App() {
 
             {agentSetKey && (
               <div className="flex items-center">
-                <label className="flex items-center text-sm sm:text-base gap-1 mr-2 font-medium">
+                <label className="flex items-center text-sm sm:text-base gap-1 mr-2 font-medium text-gray-700 dark:text-gray-300">
                   Agent
                 </label>
                 <div className="relative inline-block">
                   <select
                     value={selectedAgentName}
                     onChange={handleSelectedAgentChange}
-                    className="appearance-none border border-gray-300 rounded-lg text-sm sm:text-base px-2 py-1 pr-8 cursor-pointer font-normal focus:outline-none"
+                    className="appearance-none border border-gray-300 dark:border-gray-600 rounded-lg text-sm sm:text-base px-2 py-1 pr-8 cursor-pointer font-normal focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   >
                     {selectedAgentConfigSet?.map((agent) => (
                       <option key={agent.name} value={agent.name}>

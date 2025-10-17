@@ -5,15 +5,15 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-300">
           Welcome to your AI-powered dashboard. Manage your voice agents, view analytics, and configure settings.
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-4 sm:p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -23,17 +23,17 @@ export default function DashboardPage() {
               </div>
               <div className="ml-3 sm:ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                     Active Sessions
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">1</dd>
+                  <dd className="text-lg font-medium text-gray-900 dark:text-white">1</dd>
                 </dl>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-4 sm:p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -43,17 +43,17 @@ export default function DashboardPage() {
               </div>
               <div className="ml-3 sm:ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                     Total Interactions
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">47</dd>
+                  <dd className="text-lg font-medium text-gray-900 dark:text-white">47</dd>
                 </dl>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-4 sm:p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -63,17 +63,17 @@ export default function DashboardPage() {
               </div>
               <div className="ml-3 sm:ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                     Response Time
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">1.2s</dd>
+                  <dd className="text-lg font-medium text-gray-900 dark:text-white">1.2s</dd>
                 </dl>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
           <div className="p-4 sm:p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -83,10 +83,10 @@ export default function DashboardPage() {
               </div>
               <div className="ml-3 sm:ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                     Success Rate
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">98.5%</dd>
+                  <dd className="text-lg font-medium text-gray-900 dark:text-white">98.5%</dd>
                 </dl>
               </div>
             </div>
@@ -95,9 +95,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white shadow rounded-lg">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
             Recent Activity
           </h3>
           <div className="mt-5">

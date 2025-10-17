@@ -96,7 +96,7 @@ test.describe('Smoke Tests - Navigation', () => {
     
     // Verify we're on the dashboard
     expect(page.url()).toContain('/dashboard');
-    await expect(page.locator('h1')).toContainText('Dashboard Overview');
+    await expect(page.locator('h1').filter({ hasText: 'Dashboard Overview' })).toBeVisible();
   });
 
   test('Navigation between pages works', async ({ page }) => {
@@ -107,12 +107,12 @@ test.describe('Smoke Tests - Navigation', () => {
     // Navigate to analytics
     await page.goto('/dashboard/analytics');
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('h1')).toContainText('Analytics');
+    await expect(page.locator('h1').filter({ hasText: 'Analytics' })).toBeVisible();
     
     // Navigate to settings
     await page.goto('/dashboard/settings');
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('h1')).toContainText('Settings');
+    await expect(page.locator('h1').filter({ hasText: 'Settings' })).toBeVisible();
     
     // Navigate to voice agent
     await page.goto('/dashboard/voice-agent');
@@ -173,5 +173,31 @@ test.describe('Smoke Tests - Error Handling', () => {
       !error.includes('Failed to load resource')
     );
     expect(criticalErrors).toHaveLength(0);
+  });
+});
+
+test.describe('Smoke Tests - Dark Mode', () => {
+  test('Dark mode toggle works on dashboard', async ({ page }) => {
+    await page.goto('/dashboard');
+    await page.waitForLoadState('networkidle');
+    
+    // Check if dark mode toggle is visible
+    await expect(page.locator('text=Dark Mode')).toBeVisible();
+    
+    // Check if toggle switch is visible (target the label with cursor-pointer class)
+    const toggle = page.locator('label.cursor-pointer').last();
+    await expect(toggle).toBeVisible();
+    
+    // Test toggle functionality
+    const initialTheme = await page.evaluate(() => document.documentElement.classList.contains('dark'));
+    
+    // Click the toggle (click the label which will trigger the checkbox)
+    await toggle.click();
+    await page.waitForTimeout(500);
+    
+    const newTheme = await page.evaluate(() => document.documentElement.classList.contains('dark'));
+    
+    // Theme should have changed
+    expect(newTheme).not.toBe(initialTheme);
   });
 });
