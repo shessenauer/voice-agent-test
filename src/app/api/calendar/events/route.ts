@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { CalendarEvent } from '../../../../types/api.types';
 import { getCalendarEvents, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from '../../../../lib/mcp/adapters/googleCalendarAdapter';
 import { tokenManager } from '../../../../lib/auth/tokenManager';
-import { registerServerSideMCPServers } from '../../../../lib/mcp/serverSideRegistration';
-
-// Register server-side MCP servers on module load
-registerServerSideMCPServers();
 
 // Mock calendar events data (fallback when OAuth is not configured)
 const mockEvents: CalendarEvent[] = [

@@ -24,11 +24,6 @@ export default function GoogleCalendarAuth({
   const [error, setError] = useState<string | null>(null);
   const [, setAuthUrl] = useState<string | null>(null);
 
-  // Check authentication status on component mount
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
   const checkAuthStatus = async () => {
     try {
       // Check if user has valid tokens by making a test request
@@ -51,6 +46,16 @@ export default function GoogleCalendarAuth({
     setError(null);
 
     try {
+      // Check if already authenticated first
+      const statusResponse = await fetch('/api/calendar/events?startDate=2024-01-01T00:00:00Z&endDate=2024-12-31T23:59:59Z');
+      const statusData = await statusResponse.json();
+      
+      if (statusData.success && statusData.data.source === 'google-calendar') {
+        setIsAuthenticated(true);
+        return;
+      }
+
+      // If not authenticated, proceed with OAuth
       const response = await fetch('/api/auth/google');
       const data = await response.json();
 

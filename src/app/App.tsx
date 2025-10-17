@@ -468,6 +468,23 @@ function App() {
     };
   }, [sessionStatus]);
 
+  // Cleanup effect for when component unmounts (user navigates away)
+  useEffect(() => {
+    return () => {
+      // Disconnect the realtime session when component unmounts
+      if (sessionStatus === "CONNECTED" || sessionStatus === "CONNECTING") {
+        console.log('Disconnecting voice agent session due to navigation');
+        disconnect();
+      }
+      
+      // Stop any active audio streams
+      if (audioElementRef.current) {
+        audioElementRef.current.pause();
+        audioElementRef.current.srcObject = null;
+      }
+    };
+  }, []);
+
   const agentSetKey = searchParams.get("agentConfig") || "default";
 
   return (
