@@ -3,6 +3,9 @@
 .env.local
 .env.*.local
 
+# OAuth tokens (sensitive)
+.tokens.json
+
 # Dependencies
 node_modules/
 

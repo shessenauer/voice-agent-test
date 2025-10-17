@@ -8,6 +8,7 @@
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import type { MCPTool, MCPServer } from '../types';
+import { tokenManager } from '../../auth/tokenManager';
 
 // Google Calendar API scopes
 const CALENDAR_SCOPES = [
@@ -69,6 +70,35 @@ export function setCredentials(tokens: {
   }
   
   oauth2Client.setCredentials(tokens);
+}
+
+/**
+ * Initialize OAuth2 client with stored tokens for a user
+ */
+export async function initializeWithStoredTokens(userId: string): Promise<boolean> {
+  try {
+    const tokens = await tokenManager.getTokens(userId);
+    
+    if (!tokens) {
+      return false;
+    }
+
+    // Initialize OAuth2 client with stored credentials
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/google/callback`;
+
+    if (!clientId || !clientSecret) {
+      return false;
+    }
+
+    oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUri);
+    oauth2Client.setCredentials(tokens);
+    return true;
+  } catch (error) {
+    console.error('Error initializing with stored tokens:', error);
+    return false;
+  }
 }
 
 /**
@@ -136,8 +166,20 @@ export async function getCalendarEvents(
   maxResults: number = 50
 ): Promise<CalendarEvent[]> {
   try {
+    console.log('🔄 Refreshing token...');
     await refreshTokenIfNeeded();
+    console.log('✅ Token refreshed successfully');
+    
+    console.log('📅 Getting calendar API instance...');
     const calendar = getCalendarAPI();
+    console.log('✅ Calendar API instance created');
+    
+    console.log('🌐 Making Google Calendar API call...', {
+      calendarId,
+      timeMin: startDate,
+      timeMax: endDate,
+      maxResults
+    });
     
     const response = await calendar.events.list({
       calendarId,
@@ -145,32 +187,85 @@ export async function getCalendarEvents(
       timeMax: endDate,
       maxResults,
       singleEvents: true,
-      orderBy: 'startTime'
+      orderBy: 'startTime',
+      showDeleted: false,
+      showHiddenInvitations: false
+    });
+    
+    console.log('✅ Google Calendar API response received:', {
+      status: response.status,
+      itemsCount: response.data.items?.length || 0
     });
     
     const events = response.data.items || [];
     
-    return events.map(event => ({
-      id: event.id || '',
-      summary: event.summary || '',
-      description: event.description || '',
-      start: {
-        dateTime: event.start?.dateTime || event.start?.date || '',
-        timeZone: event.start?.timeZone || 'UTC'
-      },
-      end: {
-        dateTime: event.end?.dateTime || event.end?.date || '',
-        timeZone: event.end?.timeZone || 'UTC'
-      },
-      attendees: event.attendees?.map(attendee => attendee.email || '') || [],
-      location: event.location || '',
-      calendarId,
-      createdAt: event.created || '',
-      updatedAt: event.updated || ''
-    }));
+    return events.map(event => {
+      console.log('📅 Processing event:', {
+        id: event.id,
+        summary: event.summary,
+        start: {
+          dateTime: event.start?.dateTime,
+          date: event.start?.date,
+          timeZone: event.start?.timeZone
+        },
+        end: {
+          dateTime: event.end?.dateTime,
+          date: event.end?.date,
+          timeZone: event.end?.timeZone
+        }
+      });
+      
+      // Handle all-day events (date only) vs timed events (dateTime)
+      const startDateTime = event.start?.dateTime || event.start?.date || '';
+      const endDateTime = event.end?.dateTime || event.end?.date || '';
+      
+      // Convert date-only strings to proper ISO datetime strings
+      const formatDateTime = (dateStr: string, timeZone: string, isEnd: boolean = false) => {
+        if (!dateStr) return '';
+        
+        // If it's already a full datetime string, return as-is
+        if (dateStr.includes('T')) {
+          return dateStr;
+        }
+        
+        // If it's a date-only string, add time component
+        // For all-day events, use 00:00:00 for start and 23:59:59 for end
+        if (isEnd) {
+          return `${dateStr}T23:59:59.999Z`; // End of day in UTC
+        } else {
+          return `${dateStr}T00:00:00.000Z`; // Start of day in UTC
+        }
+      };
+      
+      return {
+        id: event.id || '',
+        summary: event.summary || '',
+        description: event.description || '',
+        start: {
+          dateTime: formatDateTime(startDateTime, event.start?.timeZone || 'UTC', false),
+          timeZone: event.start?.timeZone || 'UTC',
+          isAllDay: !event.start?.dateTime && !!event.start?.date
+        },
+        end: {
+          dateTime: formatDateTime(endDateTime, event.end?.timeZone || 'UTC', true),
+          timeZone: event.end?.timeZone || 'UTC',
+          isAllDay: !event.end?.dateTime && !!event.end?.date
+        },
+        attendees: event.attendees?.map(attendee => attendee.email || '') || [],
+        location: event.location || '',
+        calendarId,
+        createdAt: event.created || '',
+        updatedAt: event.updated || ''
+      };
+    });
   } catch (error) {
-    console.error('Error fetching calendar events:', error);
-    throw new Error('Failed to fetch calendar events');
+    console.error('❌ Error fetching calendar events:', error);
+    console.error('📊 Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined
+    });
+    throw new Error(`Failed to fetch calendar events: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 

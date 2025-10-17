@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { CalendarEvent } from '../../../../types/api.types';
-import { getCalendarEvents, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from '../../../../lib/mcp/adapters/googleCalendarAdapter';
+import { getCalendarEvents, createCalendarEvent, updateCalendarEvent, deleteCalendarEvent, initializeWithStoredTokens } from '../../../../lib/mcp/adapters/googleCalendarAdapter';
 import { tokenManager } from '../../../../lib/auth/tokenManager';
+import { registerServerSideMCPServers } from '../../../../lib/mcp/serverSideRegistration';
+
+// Register server-side MCP servers (singleton pattern prevents duplicates)
+registerServerSideMCPServers();
 
 // Mock calendar events data (fallback when OAuth is not configured)
 const mockEvents: CalendarEvent[] = [
@@ -118,8 +122,18 @@ export async function GET(request: NextRequest) {
       
       if (hasValidTokens) {
         try {
+          console.log('🔑 User has valid tokens, attempting Google Calendar API call...');
+          // Initialize OAuth client with stored tokens
+          const initialized = await initializeWithStoredTokens(userId);
+          console.log('🔧 OAuth client initialized:', initialized);
+          if (!initialized) {
+            throw new Error('Failed to initialize OAuth client with stored tokens');
+          }
+
           // Use real Google Calendar API
+          console.log('📅 Calling Google Calendar API...');
           const events = await getCalendarEvents(startDate, endDate, calendarId, limit);
+          console.log('✅ Google Calendar API returned', events.length, 'events');
           
           return NextResponse.json({
             success: true,
@@ -135,8 +149,22 @@ export async function GET(request: NextRequest) {
             }
           });
         } catch (error) {
-          console.error('Error fetching from Google Calendar:', error);
-          // Fall back to mock data if Google Calendar fails
+          console.error('❌ Error fetching from Google Calendar:', error);
+          console.error('📊 Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined
+          });
+          
+          // Return explicit error instead of falling back to mock data
+          return NextResponse.json(
+            { 
+              success: false, 
+              error: `Google Calendar API failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+              details: 'The Google Calendar integration is configured but the API call failed. Please check your internet connection and try again.',
+              source: 'google-calendar-error'
+            },
+            { status: 500 }
+          );
         }
       } else {
         return NextResponse.json(

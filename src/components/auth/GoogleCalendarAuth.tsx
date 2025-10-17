@@ -23,21 +23,62 @@ export default function GoogleCalendarAuth({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [, setAuthUrl] = useState<string | null>(null);
+  const [connectionTime, setConnectionTime] = useState<string | null>(null);
 
   const checkAuthStatus = async () => {
     try {
-      // Check if user has valid tokens by making a test request
-      const response = await fetch('/api/calendar/events?startDate=2024-01-01T00:00:00Z&endDate=2024-12-31T23:59:59Z');
+      // Check authentication status directly
+      const response = await fetch('/api/auth/status');
       const data = await response.json();
       
-      if (data.success && data.data.source === 'google-calendar') {
-        setIsAuthenticated(true);
-      } else if (data.error && data.error.includes('authentication required')) {
-        setIsAuthenticated(false);
-        setAuthUrl(data.authUrl);
+      if (data.success) {
+        setIsAuthenticated(data.data.isAuthenticated);
+        
+        if (data.data.isAuthenticated) {
+          // Get connection time from tokens
+          const tokenResponse = await fetch('/api/auth/tokens');
+          const tokenData = await tokenResponse.json();
+          if (tokenData.success && tokenData.data.tokens) {
+            setConnectionTime(tokenData.data.tokens.createdAt || 'Unknown');
+          }
+        } else {
+          // If not authenticated, get auth URL
+          const authResponse = await fetch('/api/auth/google');
+          const authData = await authResponse.json();
+          
+          if (authData.success && authData.data.authUrl) {
+            setAuthUrl(authData.data.authUrl);
+          }
+        }
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
+    }
+  };
+
+  const disconnectGoogleCalendar = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/auth/disconnect', {
+        method: 'POST'
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setIsAuthenticated(false);
+        setConnectionTime(null);
+        alert('Google Calendar disconnected successfully');
+      } else {
+        throw new Error(data.error || 'Failed to disconnect');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to disconnect';
+      setError(errorMessage);
+      alert(`Disconnect failed: ${errorMessage}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -97,27 +138,109 @@ export default function GoogleCalendarAuth({
     }
   };
 
-  // Handle OAuth callback if code is in URL
+  // Check authentication status on mount and handle OAuth callback
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     const error = urlParams.get('error');
+    const authSuccess = urlParams.get('auth');
 
     if (error) {
       setError(`OAuth error: ${error}`);
       onAuthError?.(`OAuth error: ${error}`);
     } else if (code) {
       handleAuthCallback(code);
+    } else if (authSuccess === 'success') {
+      // OAuth completed successfully, check auth status
+      checkAuthStatus();
+    } else {
+      // Check if already authenticated
+      checkAuthStatus();
     }
   }, []);
 
+  const testCalendarConnection = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Query for the next 30 days to catch recurring events
+      const today = new Date();
+      const thirtyDaysFromNow = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000));
+      const response = await fetch(`/api/calendar/events?startDate=${today.toISOString()}&endDate=${thirtyDaysFromNow.toISOString()}&limit=10`);
+      const data = await response.json();
+      
+      if (data.success && data.data.events.length > 0) {
+        const nextEvent = data.data.events[0];
+        
+        // Format the date properly for display
+        let dateDisplay = '';
+        if (nextEvent.start.isAllDay) {
+          // For all-day events, just show the date
+          dateDisplay = new Date(nextEvent.start.dateTime).toLocaleDateString();
+        } else {
+          // For timed events, show date and time
+          dateDisplay = new Date(nextEvent.start.dateTime).toLocaleString();
+        }
+        
+        alert(`Next meeting: ${nextEvent.summary}\nWhen: ${dateDisplay}${nextEvent.start.isAllDay ? ' (All Day)' : ''}\nLocation: ${nextEvent.location || 'No location'}`);
+      } else {
+        alert('No upcoming meetings found in your calendar.');
+      }
+    } catch (error) {
+      setError('Failed to fetch calendar data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isAuthenticated) {
     return (
-      <div className={`flex items-center space-x-2 text-green-600 ${className}`}>
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-        </svg>
-        <span className="text-sm font-medium">Google Calendar Connected</span>
+      <div className={`space-y-3 ${className}`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-green-600">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm font-medium">Google Calendar Connected</span>
+          </div>
+          <button
+            onClick={disconnectGoogleCalendar}
+            disabled={isLoading}
+            className="text-xs text-red-600 hover:text-red-800 underline disabled:opacity-50"
+          >
+            Disconnect
+          </button>
+        </div>
+        
+        {connectionTime && (
+          <div className="text-xs text-gray-500">
+            Connected: {new Date(connectionTime).toLocaleString()}
+          </div>
+        )}
+        
+        <button
+          onClick={testCalendarConnection}
+          disabled={isLoading}
+          className="w-full flex items-center justify-center px-3 py-2 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Testing...
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+              </svg>
+              Test: Get Next Meeting
+            </>
+          )}
+        </button>
       </div>
     );
   }

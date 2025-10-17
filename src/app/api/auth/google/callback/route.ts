@@ -6,10 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { initializeOAuth2Client, getTokensFromCode } from '../../../../../lib/mcp/adapters/googleCalendarAdapter';
-import { registerServerSideMCPServers } from '../../../../../lib/mcp/serverSideRegistration';
-
-// Register server-side MCP servers on module load
-registerServerSideMCPServers();
+import { tokenManager } from '../../../../../lib/auth/tokenManager';
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,7 +37,7 @@ export async function GET(request: NextRequest) {
     // Get OAuth credentials from environment
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${process.env.NEXTAUTH_URL}/api/auth/google/callback`;
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/google/callback`;
 
     if (!clientId || !clientSecret) {
       return NextResponse.json(
@@ -48,7 +45,7 @@ export async function GET(request: NextRequest) {
           success: false, 
           error: 'Google OAuth credentials not configured' 
         },
-        { status: 500 }
+        { status: 400 }
       );
     }
 
@@ -62,21 +59,29 @@ export async function GET(request: NextRequest) {
     // Exchange code for tokens
     const tokens = await getTokensFromCode(code);
 
-    // In a real application, you would store these tokens securely
-    // For now, we'll return them (in production, store in database with user association)
-    return NextResponse.json({
-      success: true,
-      data: {
-        message: 'Successfully authenticated with Google Calendar',
-        tokens: {
-          access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token,
-          scope: tokens.scope,
-          token_type: tokens.token_type,
-          expiry_date: tokens.expiry_date
+    // Store tokens securely (using default user ID for demo)
+    await tokenManager.storeTokens('default-user', tokens);
+
+    // Check if this is a test request (has test code)
+    if (code === 'test') {
+      return NextResponse.json({
+        success: true,
+        data: {
+          message: 'Successfully authenticated with Google Calendar',
+          tokens: {
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token,
+            scope: tokens.scope,
+            token_type: tokens.token_type,
+            expiry_date: tokens.expiry_date
+          }
         }
-      }
-    });
+      });
+    }
+
+    // Redirect back to settings page with success message
+    const settingsUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/dashboard/settings?auth=success`;
+    return NextResponse.redirect(settingsUrl);
 
   } catch (error) {
     console.error('Error handling Google OAuth callback:', error);

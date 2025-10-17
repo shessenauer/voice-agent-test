@@ -474,16 +474,24 @@ function App() {
       // Disconnect the realtime session when component unmounts
       if (sessionStatus === "CONNECTED" || sessionStatus === "CONNECTING") {
         console.log('Disconnecting voice agent session due to navigation');
-        disconnect();
+        try {
+          disconnect();
+        } catch (error) {
+          console.warn('Error during voice agent disconnect:', error);
+        }
       }
       
       // Stop any active audio streams
       if (audioElementRef.current) {
-        audioElementRef.current.pause();
-        audioElementRef.current.srcObject = null;
+        try {
+          audioElementRef.current.pause();
+          audioElementRef.current.srcObject = null;
+        } catch (error) {
+          console.warn('Error stopping audio streams:', error);
+        }
       }
     };
-  }, []);
+  }, [sessionStatus, disconnect]);
 
   const agentSetKey = searchParams.get("agentConfig") || "default";
 

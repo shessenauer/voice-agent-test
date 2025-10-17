@@ -29,15 +29,8 @@ async function initializeMCPServers() {
       }
     });
 
-    await mcpClient.registerServer({
-      name: 'calendar-server',
-      url: 'https://calendar.google.com/mcp',
-      type: 'http',
-      auth: {
-        type: 'bearer',
-        token: 'mock-calendar-token'
-      }
-    });
+    // Calendar server is registered server-side via googleCalendarAdapter
+    // See src/lib/mcp/serverSideRegistration.ts
 
     await mcpClient.registerServer({
       name: 'alexa-server',
@@ -63,7 +56,9 @@ initializeMCPServers();
 // Export tool collections for different agents
 export const searchTools = mcpToolFactory.createToolsByPattern(/^(web_search|deep_research)/i);
 export const githubTools = mcpToolFactory.createToolsByPattern(/^(create_issue|update_issue|get_issues|create_project|update_project)/i);
-export const calendarTools = mcpToolFactory.createToolsByPattern(/^calendar_/i);
+// Calendar tools are now provided by the real Google Calendar API
+// via server-side registration (see src/lib/mcp/serverSideRegistration.ts)
+export const calendarTools: any[] = [];
 export const emailTools = mcpToolFactory.createToolsByPattern(/^email_/i);
 export const homeTools = mcpToolFactory.createToolsByPattern(/^alexa_/i);
 
@@ -93,9 +88,10 @@ export const projectTools = githubTools.filter(tool =>
   tool.name.includes('project')
 );
 
-export const calendarEventTools = calendarTools.filter(tool => 
-  tool.name.includes('event')
-);
+// Calendar tools are now provided by the real Google Calendar API
+// via server-side registration (see src/lib/mcp/serverSideRegistration.ts)
+// These tools are available through the calendar API endpoints
+export const calendarEventTools: any[] = [];
 
 export const emailDraftTools = emailTools.filter(tool => 
   tool.name.includes('draft')

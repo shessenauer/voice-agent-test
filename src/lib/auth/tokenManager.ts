@@ -6,6 +6,8 @@
  */
 
 import { OAuth2Client } from 'google-auth-library';
+import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { join } from 'path';
 
 interface StoredTokens {
   access_token: string;
@@ -16,9 +18,33 @@ interface StoredTokens {
   user_id?: string;
 }
 
-// In-memory storage for demo purposes
-// In production, use a secure database or key management service
-const tokenStore = new Map<string, StoredTokens>();
+// File-based storage for demo purposes (persists across server restarts)
+const TOKENS_FILE = join(process.cwd(), '.tokens.json');
+
+function loadTokens(): Map<string, StoredTokens> {
+  try {
+    if (existsSync(TOKENS_FILE)) {
+      const data = readFileSync(TOKENS_FILE, 'utf8');
+      const tokens = JSON.parse(data);
+      return new Map(Object.entries(tokens));
+    }
+  } catch (error) {
+    console.error('Error loading tokens:', error);
+  }
+  return new Map();
+}
+
+function saveTokens(tokenStore: Map<string, StoredTokens>): void {
+  try {
+    const tokens = Object.fromEntries(tokenStore);
+    writeFileSync(TOKENS_FILE, JSON.stringify(tokens, null, 2));
+  } catch (error) {
+    console.error('Error saving tokens:', error);
+  }
+}
+
+// Load tokens from file on startup
+const tokenStore = loadTokens();
 
 export class TokenManager {
   private static instance: TokenManager;
@@ -55,6 +81,7 @@ export class TokenManager {
   async storeTokens(userId: string, tokens: StoredTokens): Promise<void> {
     // In production, encrypt tokens before storing
     tokenStore.set(userId, { ...tokens, user_id: userId });
+    saveTokens(tokenStore);
   }
 
   /**
@@ -132,6 +159,7 @@ export class TokenManager {
     }
     
     tokenStore.delete(userId);
+    saveTokens(tokenStore);
   }
 
   /**
@@ -139,6 +167,7 @@ export class TokenManager {
    */
   async hasValidTokens(userId: string): Promise<boolean> {
     const tokens = await this.getTokens(userId);
+    
     if (!tokens) {
       return false;
     }

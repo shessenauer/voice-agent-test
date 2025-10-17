@@ -6,25 +6,22 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { initializeOAuth2Client, getAuthUrl } from '../../../../lib/mcp/adapters/googleCalendarAdapter';
-import { registerServerSideMCPServers } from '../../../../lib/mcp/serverSideRegistration';
-
-// Register server-side MCP servers on module load
-registerServerSideMCPServers();
 
 export async function GET(_request: NextRequest) {
   try {
     // Get OAuth credentials from environment
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${process.env.NEXTAUTH_URL}/api/auth/google/callback`;
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI || `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/google/callback`;
 
     if (!clientId || !clientSecret) {
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Google OAuth credentials not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables.' 
+          error: 'Google OAuth credentials not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables.',
+          setupRequired: true
         },
-        { status: 500 }
+        { status: 400 }
       );
     }
 
