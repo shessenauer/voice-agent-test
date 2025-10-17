@@ -114,11 +114,17 @@ function App() {
   const [sessionStatus, setSessionStatus] =
     useState<SessionStatus>("DISCONNECTED");
   
-  // Use a ref to track session status for cleanup to avoid stale closures
+  // Use refs to track session status and disconnect function for cleanup to avoid stale closures
   const sessionStatusRef = useRef<SessionStatus>(sessionStatus);
+  const disconnectRef = useRef(disconnect);
+  
   useEffect(() => {
     sessionStatusRef.current = sessionStatus;
   }, [sessionStatus]);
+  
+  useEffect(() => {
+    disconnectRef.current = disconnect;
+  }, [disconnect]);
 
   const [isEventsPaneExpanded, setIsEventsPaneExpanded] =
     useState<boolean>(true);
@@ -484,12 +490,12 @@ function App() {
   useEffect(() => {
     return () => {
       // Only disconnect if we're actually connected or connecting
-      // Use ref to avoid stale closure issues
+      // Use refs to avoid stale closure issues
       const currentStatus = sessionStatusRef.current;
       if (currentStatus === "CONNECTED" || currentStatus === "CONNECTING") {
         console.log('Disconnecting voice agent session due to navigation');
         try {
-          disconnect();
+          disconnectRef.current();
         } catch (error) {
           console.warn('Error during voice agent disconnect:', error);
         }
@@ -505,7 +511,7 @@ function App() {
         }
       }
     };
-  }, [disconnect]); // Remove sessionStatus from dependencies to avoid premature cleanup
+  }, []); // No dependencies - only run on unmount
 
   const agentSetKey = searchParams.get("agentConfig") || "default";
 

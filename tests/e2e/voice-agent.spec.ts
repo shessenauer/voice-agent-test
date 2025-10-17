@@ -107,14 +107,17 @@ test.describe('Voice Agent Connection Tests', () => {
   });
 
   test('Voice agent page loads with all required elements', async ({ page }) => {
+    // Set a desktop viewport to ensure we get the desktop layout
+    await page.setViewportSize({ width: 1024, height: 768 });
+    
     await page.goto('/dashboard/voice-agent');
     await page.waitForLoadState('networkidle');
     
     // Check for main interface elements
     await expect(page.locator('text=Realtime API')).toBeVisible();
     
-    // Check for connect button
-    const connectButton = page.locator('button').filter({ hasText: /Connect|Disconnect/ });
+    // Check for connect button (desktop version)
+    const connectButton = page.locator('div.hidden.sm\\:flex button').filter({ hasText: /Connect|Disconnect/ });
     await expect(connectButton).toBeVisible();
     
     // Check for other controls
