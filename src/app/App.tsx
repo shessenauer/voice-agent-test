@@ -113,6 +113,12 @@ function App() {
 
   const [sessionStatus, setSessionStatus] =
     useState<SessionStatus>("DISCONNECTED");
+  
+  // Use a ref to track session status for cleanup to avoid stale closures
+  const sessionStatusRef = useRef<SessionStatus>(sessionStatus);
+  useEffect(() => {
+    sessionStatusRef.current = sessionStatus;
+  }, [sessionStatus]);
 
   const [isEventsPaneExpanded, setIsEventsPaneExpanded] =
     useState<boolean>(true);
@@ -216,7 +222,11 @@ function App() {
 
       try {
         const EPHEMERAL_KEY = await fetchEphemeralKey();
-        if (!EPHEMERAL_KEY) return;
+        if (!EPHEMERAL_KEY) {
+          console.error("Failed to fetch ephemeral key");
+          setSessionStatus("DISCONNECTED");
+          return;
+        }
 
         // Ensure the selectedAgentName is first so that it becomes the root
         const reorderedAgents = [...sdkScenarioMap[agentSetKey]];
@@ -231,6 +241,7 @@ function App() {
           : chatSupervisorCompanyName;
         const guardrail = createModerationGuardrail(companyName);
 
+        console.log("Attempting to connect with agents:", reorderedAgents.map(a => a.name));
         await connect({
           getEphemeralKey: async () => EPHEMERAL_KEY,
           initialAgents: reorderedAgents,
@@ -240,6 +251,7 @@ function App() {
             addTranscriptBreadcrumb,
           },
         });
+        console.log("Successfully connected to voice agent");
       } catch (err) {
         console.error("Error connecting via SDK:", err);
         setSessionStatus("DISCONNECTED");
@@ -462,17 +474,19 @@ function App() {
       startRecording(remoteStream);
     }
 
-    // Clean up on unmount or when sessionStatus is updated.
-    return () => {
+    // Clean up recording when session status changes to disconnected
+    if (sessionStatus === "DISCONNECTED") {
       stopRecording();
-    };
+    }
   }, [sessionStatus]);
 
   // Cleanup effect for when component unmounts (user navigates away)
   useEffect(() => {
     return () => {
-      // Disconnect the realtime session when component unmounts
-      if (sessionStatus === "CONNECTED" || sessionStatus === "CONNECTING") {
+      // Only disconnect if we're actually connected or connecting
+      // Use ref to avoid stale closure issues
+      const currentStatus = sessionStatusRef.current;
+      if (currentStatus === "CONNECTED" || currentStatus === "CONNECTING") {
         console.log('Disconnecting voice agent session due to navigation');
         try {
           disconnect();
@@ -491,7 +505,7 @@ function App() {
         }
       }
     };
-  }, [sessionStatus, disconnect]);
+  }, [disconnect]); // Remove sessionStatus from dependencies to avoid premature cleanup
 
   const agentSetKey = searchParams.get("agentConfig") || "default";
 
