@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import GoogleCalendarAuth from '../../../components/auth/GoogleCalendarAuth';
 
 export default function SettingsPage() {
   return (
@@ -64,6 +67,27 @@ export default function SettingsPage() {
               </label>
             </div>
 
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white shadow rounded-lg">
+        <div className="px-4 py-5 sm:p-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+            Integrations
+          </h3>
+          <div className="space-y-6">
+            <div>
+              <h4 className="text-md font-medium text-gray-900 mb-3">Google Calendar</h4>
+              <GoogleCalendarAuth 
+                onAuthSuccess={(tokens) => {
+                  console.log('Google Calendar authentication successful:', tokens);
+                }}
+                onAuthError={(error) => {
+                  console.error('Google Calendar authentication error:', error);
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

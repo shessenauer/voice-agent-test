@@ -13,7 +13,7 @@ function useAudioDownload() {
    * hearing itself and creating a feedback loop.
    * @param remoteStream - The remote MediaStream (e.g., from the audio element) - not used for recording.
    */
-  const startRecording = async (remoteStream: MediaStream) => {
+  const startRecording = async (_remoteStream: MediaStream) => {
     let micStream: MediaStream;
     try {
       micStream = await navigator.mediaDevices.getUserMedia({ 
