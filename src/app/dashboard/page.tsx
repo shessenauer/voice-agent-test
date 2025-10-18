@@ -135,7 +135,7 @@ export default function DashboardPage() {
                       <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                         <div>
                           <p className="text-sm text-gray-500">
-                            Calendar event created: "Hang with friends"
+                            Calendar event created: &quot;Hang with friends&quot;
                           </p>
                         </div>
                         <div className="text-right text-sm whitespace-nowrap text-gray-500">

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { tokenManager } from '../../../../lib/auth/tokenManager';
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const userId = 'default-user'; // In a real app, get from session
     

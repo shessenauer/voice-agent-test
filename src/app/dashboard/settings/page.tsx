@@ -105,7 +105,7 @@ export default function SettingsPage() {
                     <p className="text-sm font-medium text-blue-900">Privacy & Security</p>
                     <p className="text-xs text-blue-700 mt-1">
                       Your calendar data is accessed in real-time and never stored on our servers. 
-                      All communication happens directly between your browser and Google's servers.
+                      All communication happens directly between your browser and Google&apos;s servers.
                     </p>
                   </div>
                 </div>

@@ -187,7 +187,7 @@ export default function GoogleCalendarAuth({
       } else {
         alert('No upcoming meetings found in your calendar.');
       }
-    } catch (error) {
+    } catch {
       setError('Failed to fetch calendar data');
     } finally {
       setIsLoading(false);

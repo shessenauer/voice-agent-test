@@ -524,7 +524,7 @@ function App() {
             <div className="ml-3">
               <p className="text-yellow-700 dark:text-yellow-200">
                 <strong>Audio Feedback Warning:</strong> If you experience feedback loops (the agent hearing itself), 
-                please enable "Push to talk" mode in the toolbar below to prevent this issue.
+                please enable &quot;Push to talk&quot; mode in the toolbar below to prevent this issue.
               </p>
             </div>
           </div>

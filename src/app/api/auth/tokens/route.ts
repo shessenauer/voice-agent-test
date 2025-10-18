@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { tokenManager } from '../../../../lib/auth/tokenManager';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const userId = 'default-user'; // In a real app, get from session
     const tokens = await tokenManager.getTokens(userId);

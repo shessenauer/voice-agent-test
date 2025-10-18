@@ -57,7 +57,17 @@ export async function GET(request: NextRequest) {
     });
 
     // Exchange code for tokens
-    const tokens = await getTokensFromCode(code);
+    const credentials = await getTokensFromCode(code);
+
+    // Convert credentials to StoredTokens format
+    const tokens = {
+      access_token: credentials.access_token!,
+      refresh_token: credentials.refresh_token || undefined,
+      scope: credentials.scope || '',
+      token_type: credentials.token_type || 'Bearer',
+      expiry_date: credentials.expiry_date || 0,
+      user_id: 'default-user'
+    };
 
     // Store tokens securely (using default user ID for demo)
     await tokenManager.storeTokens('default-user', tokens);

@@ -29,8 +29,7 @@ export default defineConfig({
     /* Screenshot comparison options */
     toHaveScreenshot: {
       threshold: 0.2,
-      mode: 'rgb',
-      path: 'test-snapshots'
+      pathTemplate: 'test-snapshots/{arg}{ext}'
     },
   },
 

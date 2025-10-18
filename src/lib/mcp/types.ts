@@ -12,6 +12,15 @@ export interface MCPServer {
   status: 'connected' | 'disconnected' | 'error';
   lastConnected?: Date;
   error?: string;
+  auth?: {
+    type: 'bearer' | 'basic' | 'apikey' | 'oauth2';
+    token?: string;
+    username?: string;
+    password?: string;
+    apiKey?: string;
+    scopes?: string[];
+  };
+  tools?: MCPTool[];
 }
 
 export interface MCPTool {
@@ -70,11 +79,12 @@ export interface MCPServerConfig {
   retries?: number;
   retryDelay?: number;
   auth?: {
-    type: 'bearer' | 'basic' | 'apikey';
+    type: 'bearer' | 'basic' | 'apikey' | 'oauth2';
     token?: string;
     username?: string;
     password?: string;
     apiKey?: string;
+    scopes?: string[];
   };
 }
 

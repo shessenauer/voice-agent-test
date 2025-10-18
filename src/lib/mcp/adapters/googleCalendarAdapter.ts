@@ -416,6 +416,7 @@ export const googleCalendarTools: MCPTool[] = [
   {
     name: 'calendar_get_events',
     description: 'Get calendar events for a specific date range',
+    server: 'google-calendar',
     inputSchema: {
       type: 'object',
       properties: {
@@ -444,6 +445,7 @@ export const googleCalendarTools: MCPTool[] = [
   {
     name: 'calendar_create_event',
     description: 'Create a new calendar event',
+    server: 'google-calendar',
     inputSchema: {
       type: 'object',
       properties: {
@@ -492,6 +494,7 @@ export const googleCalendarTools: MCPTool[] = [
   {
     name: 'calendar_update_event',
     description: 'Update an existing calendar event',
+    server: 'google-calendar',
     inputSchema: {
       type: 'object',
       properties: {
@@ -531,6 +534,7 @@ export const googleCalendarTools: MCPTool[] = [
   {
     name: 'calendar_delete_event',
     description: 'Delete a calendar event',
+    server: 'google-calendar',
     inputSchema: {
       type: 'object',
       properties: {
@@ -555,6 +559,7 @@ export const googleCalendarMCPServer: MCPServer = {
   name: 'google-calendar-server',
   url: 'https://www.googleapis.com/calendar/v3',
   type: 'http',
+  status: 'disconnected',
   auth: {
     type: 'oauth2',
     scopes: CALENDAR_SCOPES
